@@ -238,7 +238,14 @@ export default {
       // 核心状态
       isLoading: false,
       userInput: '',
-      chatMessages: [],
+      chatMessages: [], // 当前显示的聊天记录
+      // 为每个面板独立保存聊天记录
+      panelChatHistory: {
+        knowledge: [],
+        projects: [],
+        learning: [],
+        business: []
+      },
       // 修改为支持多文件
       selectedFiles: [], // 存储 File 对象
       selectedFilePreviews: [], // 存储 { name, isImage, data (Base64) } 用于预览
@@ -294,6 +301,7 @@ export default {
   },
   mounted() {
     this.isVisible = true;
+    // 为默认激活的面板初始化聊天记录
     this.initializeChat(this.panels[this.activePanel].welcomeMessage);
     // 初始化神经网络动画
     this.initNeuralNetwork();
@@ -307,12 +315,29 @@ export default {
 
     // --- UI & Interaction ---
     setActivePanel(panelId) {
-      if (this.isLoading) return; // 正在加载时不允许切换面板
+      if (this.isLoading) return;
+      
+      // 保存当前面板的聊天记录
+      if (this.activePanel) {
+        this.panelChatHistory[this.activePanel] = [...this.chatMessages];
+      }
+      
+      // 切换到新面板
       this.activePanel = panelId;
-      this.initializeChat(this.panels[panelId].welcomeMessage); // 切换面板时重置聊天记录
+      
+      // 加载新面板的聊天记录，如果没有则初始化
+      if (this.panelChatHistory[panelId].length === 0) {
+        this.initializeChat(this.panels[panelId].welcomeMessage);
+      } else {
+        this.chatMessages = [...this.panelChatHistory[panelId]];
+      }
+      
+      this.clearUserInput(); // 重置输入框和图片
     },
     initializeChat(welcomeMessage) {
       this.chatMessages = [{ id: Date.now(), type: 'ai', content: [{ type: 'text', value: welcomeMessage }], timestamp: new Date() }];
+      // 保存到当前面板的历史记录
+      this.panelChatHistory[this.activePanel] = [...this.chatMessages];
       this.clearUserInput(); // 重置输入框和图片
     },
 
@@ -447,6 +472,8 @@ export default {
       
       this.chatMessages.push({ id: Date.now(), type: 'user', content: userMessageContent, timestamp: new Date() });
       this.chatMessages.push({ id: Date.now() + 1, type: 'loading', content: [] }); // 显示加载动画
+      // 保存到当前面板的历史记录（包含用户消息和加载状态）
+      this.panelChatHistory[this.activePanel] = [...this.chatMessages];
       this.scrollToBottom(); // 滚动到底部
 
       const question = userText;
@@ -527,6 +554,8 @@ export default {
     updateChatWithAIResponse(content) {
       this.chatMessages = this.chatMessages.filter(m => m.type !== 'loading'); // 移除加载消息
       this.chatMessages.push({ id: Date.now(), type: 'ai', content, timestamp: new Date() });
+      // 保存到当前面板的历史记录
+      this.panelChatHistory[this.activePanel] = [...this.chatMessages];
       this.scrollToBottom();
     },
 
