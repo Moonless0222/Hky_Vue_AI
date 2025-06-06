@@ -1,0 +1,44 @@
+
+/* Basic Reset & Global Styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif; /* 现代化、清晰的字体 */
+    background-color: #d4dacb; /* 淡雅的背景色 */
+    color: #161616;
+    line-height: 1.6;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    font-weight: 800; /* 标题加粗 */
+  }
+  
+  a {
+    text-decoration: none;
+    color: #2471A3; /* 科技蓝作为链接颜色 */
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  /* Basic AI & Environment Theme Colors (Variables for easy customization) */
+  :root {
+    --primary-color-tech: #1A5276; /* 科技蓝 */
+    --primary-color-env: #fc6500; /* 环保绿 */
+    --secondary-color-gray: #ABB2B9;
+    --text-color-light: #ffffff;
+    --text-color-dark: #34495e;
+    --header-bg: #ffffff;
+    --footer-bg: #2c3e50;
+  }
+  
+  /* Placeholder for further global styles */
+  
